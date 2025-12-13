@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.id }} - Pizza Shop{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Order #{{ order.id }}</h2>
+            <p class="text-muted">Placed on {{ order.created_at|date:"F d, Y H:i" }}</p>
+            <hr>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Order Items</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ item.price }}</td>
+                                <td><strong>${{ item.get_total }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3">Total:</th>
+                                <th class="text-primary">${{ order.total_price }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Order Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl>
+                        <dt>Status:</dt>
+                        <dd>
+                            <span class="badge bg-{% if order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}danger{% elif order.status == 'paid' %}info{% else %}warning{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </dd>
+                        <dt>Customer:</dt>
+                        <dd>{{ order.customer.username }}</dd>
+                        <dt>Order Date:</dt>
+                        <dd>{{ order.created_at|date:"F d, Y H:i" }}</dd>
+                        <dt>Total Amount:</dt>
+                        <dd><strong class="text-primary">${{ order.total_price }}</strong></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'orders:order_list' %}" class="btn btn-secondary">Back to Orders</a>
+</div>
+{% endblock %}
+

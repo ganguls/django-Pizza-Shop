@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Pizza Shop{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-primary text-white py-5 mb-5">
+    <div class="container text-center">
+        <h1 class="display-4">Welcome to Pizza Shop!</h1>
+        <p class="lead">Delicious pizzas made with love</p>
+        <a href="{% url 'products:product_list' %}" class="btn btn-light btn-lg mt-3">Order Now</a>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Categories Section -->
+    {% if categories %}
+    <section class="mb-5">
+        <h2 class="mb-4">Categories</h2>
+        <div class="row">
+            {% for category in categories %}
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="card-text">{{ category.description|truncatewords:15 }}</p>
+                        <a href="{% url 'products:category_detail' category.slug %}" class="btn btn-primary">View Products</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Featured Products Section -->
+    {% if featured_products %}
+    <section class="mb-5">
+        <h2 class="mb-4">Featured Pizzas</h2>
+        <div class="row">
+            {% for product in featured_products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="bi bi-image text-white" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 text-primary mb-0">${{ product.price }}</span>
+                            <a href="{% url 'products:product_detail' product.pk %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'products:product_list' %}" class="btn btn-outline-primary btn-lg">View All Products</a>
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
+
