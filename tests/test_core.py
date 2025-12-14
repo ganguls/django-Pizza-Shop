@@ -53,3 +53,4 @@ class TestHomeView:
         assert response.status_code == 200
         assert 'categories' in response.context
 
+

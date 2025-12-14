@@ -127,3 +127,4 @@ class TestAuthenticationViews:
         assert response.status_code == 200
         assert 'profile' in response.context
 
+

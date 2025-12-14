@@ -198,3 +198,4 @@ class TestProductViews:
         assert category == response.context['category']
         assert product in response.context['products']
 
+
