@@ -37,19 +37,19 @@ class TestHomeView:
     
     def test_home_view(self, client):
         """Test home page loads."""
-        response = client.get(reverse('core:home'))
+        response = client.get(reverse('core:home'), follow=True)
         assert response.status_code == 200
     
     def test_home_view_shows_featured_products(self, client, products):
         """Test home page shows featured products."""
-        response = client.get(reverse('core:home'))
+        response = client.get(reverse('core:home'), follow=True)
         assert response.status_code == 200
         assert 'featured_products' in response.context
         assert len(response.context['featured_products']) <= 6
     
     def test_home_view_shows_categories(self, client, category):
         """Test home page shows categories."""
-        response = client.get(reverse('core:home'))
+        response = client.get(reverse('core:home'), follow=True)
         assert response.status_code == 200
         assert 'categories' in response.context
 

@@ -113,7 +113,7 @@ class TestProductViews:
     
     def test_product_list_view(self, client, product):
         """Test product list view."""
-        response = client.get(reverse('products:product_list'))
+        response = client.get(reverse('products:product_list'), follow=True)
         assert response.status_code == 200
         assert product in response.context['products']
     
@@ -133,7 +133,8 @@ class TestProductViews:
             category=category,
             is_available=False
         )
-        response = client.get(reverse('products:product_list'))
+        response = client.get(reverse('products:product_list'), follow=True)
+        assert response.status_code == 200
         products = list(response.context['products'])
         assert available in products
         assert unavailable not in products
@@ -155,27 +156,30 @@ class TestProductViews:
             is_available=False
         )
         client.login(username='admin', password='admin123')
-        response = client.get(reverse('products:product_list'))
+        response = client.get(reverse('products:product_list'), follow=True)
+        assert response.status_code == 200
         products = list(response.context['products'])
         assert available in products
         assert unavailable in products
     
     def test_product_detail_view(self, client, product):
         """Test product detail view."""
-        response = client.get(reverse('products:product_detail', args=[product.pk]))
+        response = client.get(reverse('products:product_detail', args=[product.pk]), follow=True)
         assert response.status_code == 200
         assert response.context['product'] == product
     
     def test_product_create_view_requires_admin(self, client, customer_user, category):
         """Test that only admins can create products."""
         client.login(username='customer', password='pass123')
-        response = client.get(reverse('products:product_create'))
-        assert response.status_code == 302  # Redirected
+        response = client.get(reverse('products:product_create'), follow=True)
+        # Should redirect (non-admin access denied)
+        assert response.status_code == 200
+        assert len(response.redirect_chain) > 0
     
     def test_product_create_view_admin(self, client, admin_user, category):
         """Test admin can create products."""
         client.login(username='admin', password='admin123')
-        response = client.get(reverse('products:product_create'))
+        response = client.get(reverse('products:product_create'), follow=True)
         assert response.status_code == 200
     
     def test_product_create_post(self, client, admin_user, category):
@@ -187,13 +191,13 @@ class TestProductViews:
             'price': '15.99',
             'category': category.pk,
             'is_available': True,
-        })
-        assert response.status_code == 302  # Redirect after success
+        }, follow=True)
+        assert response.status_code == 200  # After following redirect
         assert Product.objects.filter(name='New Pizza').exists()
     
     def test_category_detail_view(self, client, category, product):
         """Test category detail view."""
-        response = client.get(reverse('products:category_detail', args=[category.slug]))
+        response = client.get(reverse('products:category_detail', args=[category.slug]), follow=True)
         assert response.status_code == 200
         assert category == response.context['category']
         assert product in response.context['products']

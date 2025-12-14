@@ -42,6 +42,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# URL settings
+APPEND_SLASH = True
+
 ROOT_URLCONF = 'pizzashop.urls'
 
 TEMPLATES = [
